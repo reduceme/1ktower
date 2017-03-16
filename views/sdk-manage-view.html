@@ -1,0 +1,275 @@
+<style>
+    .modal-body-span {
+        display: block;
+        width: 80px;
+        float: left;
+    }
+
+    .modal-body-div {
+        margin-bottom: 20px
+    }
+</style>
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group">
+                <button class="btn btn-default" data-toggle="modal" data-target="#addSDK">创建</button>
+                <button class="btn btn-default" data-toggle="modal" data-target="#changeModal" ng-disabled="update">修改
+                </button>
+                <button class="btn btn-default" ng-disabled="delete" ng-click="deleteConfirmWin()">删除</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>序号</td>
+                    <td>选择</td>
+                    <td class="col-md-1">产品名</td>
+                    <td class="col-md-2">产品ID</td>
+                    <td class="col-md-1">价格</td>
+                    <td class="col-md-1">额外信息</td>
+                    <td class="col-md-1">实际金额</td>
+                    <td class="col-md-1">币种</td>
+                    <td class="col-md-2">上线时间</td>
+                    <td class="col-md-2">充值类型</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in sdkList">
+                    <td>{{$index + 1}}</td>
+                    <td><input type="checkbox" ng-model="item.isSelected"
+                               ng-click="changeStatus(item.isSelected);getChanged()"></td>
+                    <td class="col-md-1">{{item.name}}</td>
+                    <td class="col-md-2">{{item.production_id}}</td>
+                    <td class="col-md-1">{{item.price}}</td>
+                    <td class="col-md-1">{{item.Extra}}</td>
+                    <td class="col-md-1">{{item.real_price}}</td>
+                    <td class="col-md-1">{{item.Currency}}</td>
+                    <td class="col-md-2">{{item.OnlineAt}}</td>
+                    <td class="col-md-2">{{item.Type}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--创建 模态框-->
+<div class="modal fade" id="addSDK" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog" style="width: 450px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加sdk商品
+                </h4>
+            </div>
+
+            <form name="addSdkManageForm">
+                <div class="modal-body">
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="产品名输入不正确" id="sdk_c_name" data-trigger="focus">产&nbsp;&nbsp;品&nbsp;&nbsp;名：</span>
+                        <input class="form-control" style="width: 75%" ng-model="name" placeholder="请输入产品名称" required
+                               name="sdk_c_name" ng-class="{'has-error': sdk_c_name_has_error}"
+                               ng-focus="remove('sdk_c_name_has_error')"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="金额输入不正确" id="sdk_price" data-trigger="focus">金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额：</span>
+                        <input class="form-control" style="width: 75%" ng-model="price" placeholder="请输入产品金额" required
+                               name="sdk_price" ng-class="{'has-error': sdk_price_has_error}"
+                               ng-focus="remove('sdk_price_has_error')"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="实际金额输入不正确" id="sdk_real_price" data-trigger="focus">实际金额：</span>
+                        <input class="form-control" style="width: 75%" ng-model="real_price" placeholder="请输入产品实际金额"
+                               required name="sdk_real_price" ng-class="{'has-error': sdk_real_price_has_error}"
+                               ng-focus="remove('sdk_real_price_has_error')"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="币种输入不正确" id="transPrice" data-trigger="focus">币&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;种：</span>
+                        <input class="form-control" style="width: 75%" ng-model="currency" required name="transPrice"
+                               ng-class="{'has-error': transPrice_has_error}"
+                               ng-focus="remove('transPrice_has_error')"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：</span>
+                        <input class="form-control" style="width: 75%" value="SDK充值" ng-disabled="true">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">额外信息：</span>
+                        <textarea class="form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="extra"
+                                  rows="3" style="max-width: 75%"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="confirmWin()">保存</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addCancle()">关闭
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--修改 模态框-->
+<div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog" style="width: 450px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="ModalLabel">
+                    修改sdk商品信息
+                </h4>
+            </div>
+
+            <form name="updateSdkManageForm">
+                <div class="modal-body">
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="产品名输入不正确" id="change_sdk_c_name"
+                              data-trigger="focus">产&nbsp;&nbsp;品&nbsp;&nbsp;名：</span>
+                        <input class="form-control" style="width: 75%" ng-model="changeInfo.changeName"
+                               placeholder="请输入产品名称" required name="change_sdk_c_name"
+                               ng-class="{'has-error': change_sdk_c_name_has_error}"
+                               ng-focus="remove('change_sdk_c_name_has_error')"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额：</span>
+                        <input class="form-control" style="width: 75%" ng-model="changeInfo.price">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="实际金额输入不正确" id="change_sdk_real_price"
+                              data-trigger="focus">实际金额：</span>
+                        <input class="form-control" style="width: 75%" ng-model="changeInfo.real_price"
+                               placeholder="请输入产品实际金额" required name="change_sdk_real_price"
+                               ng-class="{'has-error': change_sdk_real_price_has_error}"
+                               ng-focus="remove('change_sdk_real_price_has_error')"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">币&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;种：</span>
+                        <input class="form-control" style="width: 75%" disabled="true" value="RMB">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：</span>
+                        <input class="form-control" style="width: 75%" disabled="true" value="SDK充值">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">额外信息：</span>
+                        <textarea class="form-control ng-pristine ng-untouched ng-valid ng-empty" rows="3"
+                                  style="max-width: 75%" ng-model="changeInfo.Extra"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="updateConfirmWin()">确认更改</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="changeCancle()">
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!--添加 确认-->
+<div class="modal fade" id="confir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="confirLabel">
+                    创建SDK产品
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认创建SDK产品？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="addSdk()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改 确认-->
+<div class="modal fade" id="updateConfir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="updateConfirLabel">
+                    修改SDK产品信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认修改SDK产品信息？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="updateSdk()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteConfir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="deleteConfirLabel">
+                    删除SDK产品信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认删除SDK产品信息？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="deleteSdk()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

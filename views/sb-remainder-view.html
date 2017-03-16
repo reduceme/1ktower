@@ -1,0 +1,40 @@
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+    <form name="sbRemainderForm">
+        <div class="col-md-3">
+            <div class="input-group">
+                <span class="input-group-addon" data-container="body" data-toggle="popover" data-placement="bottom"
+                      data-content="输入账号不正确" id="input_id" data-trigger="focus">发放UID：</span>
+                <input type="text" class="form-control" ng-model="adminID" placeholder="请输入需要查询的UID" required
+                       name="input_id" ng-class="{'has-error': input_id_has_error}"
+                       ng-focus="remove('input_id_has_error')">
+            </div>
+        </div>
+
+        <div class="btn-group" style="margin-left: 20px">
+            <button type="button" class="btn btn-danger" ng-click="getRemainderList()">查询</button>
+            <button type="button" class="btn btn-default" ng-click="clear()">重置</button>
+        </div>
+    </form>
+    <hr>
+
+    <div class="row col-lg-offset-3">
+        <div class="col-md-6">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>账号</td>
+                    <td>余额</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in key">
+                    <td>{{item.key}}</td>
+                    <td>{{item.value}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

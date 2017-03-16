@@ -1,0 +1,334 @@
+<style>
+    td {
+        text-align: center
+    }
+
+    .modal-body-span {
+        display: block;
+        width: 140px;
+        float: left;
+        text-align: center
+    }
+
+    .modal-body-div {
+        margin-bottom: 20px
+    }
+</style>
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group">
+                <button class="btn btn-default" data-toggle="modal" data-target="#addChannel">创建</button>
+                <button class="btn btn-default" data-toggle="modal" data-target="#changeModal" ng-disabled="update">修改
+                </button>
+                <!--<button class="btn btn-default" ng-disabled="delete" ng-click="deleteConfirmWin()">删除</button>-->
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>序号</td>
+                    <td>选择</td>
+                    <td class="col-md-2">中文渠道名</td>
+                    <td class="col-md-2">英文渠道名</td>
+                    <td class="col-md-2">渠道ID</td>
+                    <td class="col-md-2">父渠道</td>
+                    <td class="col-md-3">渠道描述</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in channelList">
+                    <td>{{$index + 1}}</td>
+                    <td><input type="checkbox" ng-model="item.isSelected"
+                               ng-click="changeStatus(item.isSelected);getChangeed()"></td>
+                    <td class="col-md-2">{{item.name}}</td>
+                    <td class="col-md-2">{{item.en_name}}</td>
+                    <td class="col-md-2">{{item.channel_id}}</td>
+                    <td class="col-md-2">{{item.parent_id}}</td>
+                    <td class="col-md-3">{{item.extra}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-4" style="float: right;margin-right: 10px;margin-top: 20px">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="lastPage()" ng-disabled="isLast">上一页</button>
+            <button type="button" class="btn btn-default">
+                第
+                <input type="text"
+                       style="width: 30px;height: 20px;margin-left: 5px;margin-right: 5px;text-align: center;"
+                       ng-model="showPage">页
+            </button>
+            <button type="button" class="btn btn-danger" ng-click="goto()">跳转</button>
+            <button type="button" class="btn btn-default" ng-click="nextPage()" ng-disabled="isNext">下一页</button>
+        </div>
+        <label class="control-label" style="color: #ccc">共{{allPage}}页</label>
+    </div>
+</div>
+
+<!--创建 模态框-->
+<div class="modal fade" id="addChannel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog" style="width: 450px">
+        <div class="modal-content" style="width: 600px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加渠道
+                </h4>
+            </div>
+
+            <form name="addChannelForm">
+                <div class="modal-body">
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="中文渠道名不正确" id="c_name"
+                              data-trigger="focus">中文渠道名：</span>
+                        <input class="form-control" style="width: 70%" ng-model="name" placeholder="请输入中文渠道名" required
+                               name="c_name" ng-class="{'has-error': c_name_has_error}"
+                               ng-focus="remove('c_name_has_error')"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="英文渠道名不正确" id="en_name"
+                              data-trigger="focus">英文渠道名：</span>
+                        <input class="form-control" style="width: 70%" ng-model="enName" placeholder="请输入英文渠道名" required
+                               name="en_name" ng-class="{'has-error': en_name_has_error}"
+                               ng-focus="remove('en_name_has_error')"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="渠道ID号必填" id="channel_id"
+                              data-trigger="focus">渠道ID号：</span>
+                        <input class="form-control" style="width: 70%" ng-model="channelID" placeholder="请输入渠道ID号"
+                               required name="channel_id" ng-class="{'has-error': channel_id_has_error}"
+                               ng-focus="remove('channel_id_has_error')"/>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0">
+                        <span class="modal-body-span">父渠道：</span>
+                        <select class="form-control" style="width: 70%" ng-change="getParentChannel(item.channel_id)"
+                                ng-model="item.channel_id"
+                                ng-options="item.channel_id as item.name for item in channelList">
+                        </select>
+                    </div>
+                    <br/>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">android_meta_keys：</span>
+                        <input class="form-control" style="width: 70%" ng-model="android_meta_keys"
+                               placeholder="请输入渠道android_meta_keys"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">渠道描述：</span>
+                        <textarea placeholder="渠道描述信息" class="form-control ng-pristine ng-untouched ng-valid ng-empty"
+                                  ng-model="extra" rows="3" style="max-width: 70%"></textarea>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">渠道选择：</span>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-repeat="objOne in android" ng-model="objOne.isSelected"
+                                       ng-change="changeStatus(objOne.isSelected);">android
+                            </label>
+                            <label>
+                                <input type="checkbox" ng-repeat="objTwo in IOS" ng-model="objTwo.isSelected"
+                                       ng-change="changeStatus(objTwo.isSelected);">IOS
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="confirmWin()">保存</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addCancle()">关闭
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--修改 模态框-->
+<div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog" style="width: 450px">
+        <div class="modal-content" style="width: 600px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="ModalLabel">
+                    修改渠道信息
+                </h4>
+            </div>
+
+            <form name="updateChannelForm">
+                <div class="modal-body">
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="中文渠道名错误" id="change_c_name" data-trigger="focus">中文渠道名：</span>
+                        <input class="form-control" style="width: 70%" ng-model="changeInfo.name" placeholder="请输入中文渠道名"
+                               required name="change_c_name" ng-class="{'has-error': change_c_name_has_error}"
+                               ng-focus="remove('change_c_name_has_error')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="英文渠道名错误" id="change_en_name" data-trigger="focus">英文渠道名：</span>
+                        <input class="form-control" style="width: 70%" ng-model="changeInfo.en_name"
+                               placeholder="请输入英文渠道名" required name="change_en_name"
+                               ng-class="{'has-error': change_en_name_has_error}"
+                               ng-focus="remove('change_en_name_has_error')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="渠道ID号必填" id="change_channel_id"
+                              data-trigger="focus">渠道ID号：</span>
+                        <input class="form-control" style="width: 70%" ng-model="changeInfo.channel_id"
+                               placeholder="请输入渠道ID号" required name="change_channel_id"
+                               ng-class="{'has-error': change_channel_id_has_error}"
+                               ng-focus="remove('change_channel_id_has_error')"/>
+                    </div>
+
+                    <form role="form">
+                        <div class="form-group" style="margin-bottom: 0">
+                            <span class="modal-body-span" data-container="body" data-toggle="popover"
+                                  data-placement="bottom">父渠道：</span>
+                            <select class="form-control" style="width: 70%"
+                                    ng-change="getParentChannel(item.channel_id)" ng-model="item.channel_id"
+                                    ng-options="item.channel_id as item.name for item in channelList">
+                            </select>
+                        </div>
+                    </form>
+                    <br/>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">android_meta_keys：</span>
+                        <input class="form-control" style="width: 70%" ng-model="changeInfo.android_meta_keys"
+                               placeholder="请输入渠道android_meta_keys"/>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">渠道描述：</span>
+                        <textarea class="form-control ng-pristine ng-untouched ng-valid ng-empty" rows="3"
+                                  ng-model="changeInfo.extra" style="max-width: 70%"></textarea>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">渠道选择：</span>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-repeat="objOne in android" ng-model="objOne.isSelected"
+                                       ng-change="changeStatus(objOne.isSelected);getPlatform()">android
+                            </label>
+                            <label>
+                                <input type="checkbox" ng-repeat="objTwo in IOS" ng-model="objTwo.isSelected"
+                                       ng-change="changeStatus(objTwo.isSelected);getPlatform()">IOS
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="updateConfirmWin()">保存</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="changeCancle()">
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!--创建 确认-->
+<div class="modal fade" id="confir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="confirLabel">
+                    添加渠道信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认添加渠道？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="addChannel()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改 确认-->
+<div class="modal fade" id="updateConfir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="updateConfirLabel">
+                    更改渠道信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认更改渠道信息？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="updateChannel()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--删除 确认-->
+<div class="modal fade" id="deleteConfir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="deleteConfirLabel">
+                    删除渠道信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认删除渠道信息？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="deleteChannel()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

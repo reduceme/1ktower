@@ -1,0 +1,231 @@
+<style>
+    .secondRow {
+        margin-top: 10px
+    }
+
+    .btnGroup {
+        margin-top: 10px;
+        margin-left: 15px
+    }
+</style>
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">订&nbsp;&nbsp;单&nbsp;&nbsp;号：</span>
+            <input class="form-control" ng-model="orderID">
+        </div>
+    </div>
+
+    <!--下拉框需要从后台获取-->
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">选择游戏：</span>
+            <select class="form-control" ng-change="getSelectApp(obj.appid)" ng-model="obj.appid"
+                    ng-options="obj.appid as obj.name for obj in appList">
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">充值账号：</span>
+            <input class="form-control" ng-model="accountInfo">
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">充值方式：</span>
+            <select class="form-control" ng-change="getSelectPayWay(selectedPrePaid)" ng-model="selectedPrePaid"
+                    ng-options="payWay.value as payWay.name for payWay in prePaid">
+            </select>
+        </div>
+    </div>
+
+    <div style="clear: both;"></div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">订单状态：</span>
+            <select class="form-control" ng-change="getSelectOrder(orderStatusList)" ng-model="orderStatusList"
+                    ng-options="order.id as order.name for order in orderStatus">
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">选择渠道：</span>
+            <select class="form-control" ng-change="getSelectChannel(item.channel_id)" ng-model="item.channel_id"
+                    ng-options="item.channel_id as item.name for item in channelList">
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">开始时间：</span>
+            <input id="orderDataStart" name="dtBegin" type="text" class="form-control" ng-model="startTime">
+        </div>
+    </div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">结束时间：</span>
+            <input id="orderDataEnd" name="dtEnd" type="text" class="form-control" ng-model="endTime">
+        </div>
+    </div>
+
+
+    <div class="btn-group secondRow" style="margin-left: 15px">
+        <button type="button" class="btn btn-danger" ng-click="resetInfo();getOrderList()">查询</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getToday()">当日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getWeek()">7日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getThirtieth()">30日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getCurrentMonthFirst()">当月</button>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>订单号</td>
+                    <td>创建时间</td>
+                    <td>账号</td>
+                    <td>游戏</td>
+                    <td>充值金额</td>
+                    <td>订单状态</td>
+                    <td>区服</td>
+                    <td>充值方式</td>
+                    <td>注册渠道号</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in orderList">
+                    <td>{{item.order_id}}</td>
+                    <td>{{item.created_at}}</td>
+                    <td>{{item.uid}}</td>
+                    <td>{{item.app_name}}</td>
+                    <td>{{item.money}}</td>
+                    <td>{{item.status}}</td>
+                    <td>{{item.server_name}}</td>
+                    <td>{{item.pay_by}}</td>
+                    <td>{{item.channel_id}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4" style="float: right;margin-right: 10px;margin-top: 20px">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="lastPage()" ng-disabled="isLast">上一页</button>
+            <button type="button" class="btn btn-default">
+                第
+                <input type="text"
+                       style="width: 30px;height: 20px;margin-left: 5px;margin-right: 5px;text-align: center;"
+                       ng-model="showPage">页
+            </button>
+            <button type="button" class="btn btn-danger" ng-click="goto()">跳转</button>
+            <button type="button" class="btn btn-default" ng-click="nextPage()" ng-disabled="isNext">下一页</button>
+        </div>
+        <label class="control-label" style="color: #ccc">共{{allPage}}页</label>
+    </div>
+</div>
+
+<!--充值方式-->
+<div class="modal fade" id="showAdModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">充值方式</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <td>选择</td>
+                        <td>方式</td>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="obj2 in prePaid">
+                        <td><input type="checkbox" ng-model="obj2.isSelected" ng-click="getChanged()"></td>
+                        <td>{{obj2.name}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--订单状态-->
+<div class="modal fade" id="showOrderModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="orderStatusH4">充值方式</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <td>选择</td>
+                        <td>方式</td>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="obj3 in orderStatus">
+                        <td><input type="checkbox" ng-model="obj3.isSelected" ng-click="getOrderChanged()"></td>
+                        <td>{{obj3.name}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#orderDataStart').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language: 'zh-CN',
+        pickDate: true,
+        pickTime: true,
+        inputMask: true,
+        pickerPosition: "bottom-left",
+        autoclose: true
+    });
+
+    $('#orderDataEnd').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language: 'zh-CN',
+        pickDate: true,
+        pickTime: true,
+        inputMask: true,
+        pickerPosition: "bottom-left",
+        autoclose: true
+    });
+</script>

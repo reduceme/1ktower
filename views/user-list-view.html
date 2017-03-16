@@ -1,0 +1,89 @@
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+    <div class="row">
+        <div style="padding: 0 0 0 15px;">
+            <form class="bs-example bs-example-form" role="form" name="form">
+
+
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">查询：</span>
+                        <input type="text" class="form-control" ng-model="condition" placeholder="输入账号/UID/绑定手机">
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">账号类型：</span>
+                        <select class="form-control" ng-change="orderChange(selectedOrder)" ng-model="selectedOrder"
+                                ng-options="obj.id as obj.name for obj in orderList"></select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">排序方式：</span>
+                        <select class="form-control" ng-change="change(selectedDisplay)" ng-model="selectedDisplay"
+                                ng-options="item.id as item.name for item in displayMode"></select>
+                    </div>
+                </div>
+
+
+                <div class="btn-group" style="margin-left: 15px">
+                    <button type="button" class="btn btn-danger" ng-click="searchByID();">查询</button>
+                    <button type="button" class="btn btn-default" ng-click="clear()">重置</button>
+                </div>
+
+                <div style="clear: both"></div>
+            </form>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-11" style="margin-left: 50px">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td style="width: 60px">序号</td>
+                    <td class="col-md-1">账号类型</td>
+                    <td class="col-md-2">账号名称</td>
+                    <td class="col-md-2">UID</td>
+                    <td class="col-md-2">绑定手机</td>
+                    <td class="col-md-1">状态</td>
+                    <td class="col-md-1">是否在线</td>
+                    <td class="col-md-2">最后在线时间</td>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="item in userList">
+                    <td style="width: 60px">{{$index + 1}}</td>
+                    <td class="col-md-1">{{item.role}}</td>
+                    <td class="col-md-2">{{item.name}}</td>
+                    <td class="col-md-2">{{item.uid}}</td>
+                    <td class="col-md-2">{{item.phone}}</td>
+                    <td class="col-md-1">{{item.status}}</td>
+                    <td class="col-md-1">{{item.is_online}}</td>
+                    <td class="col-md-2">{{item.last_login_time}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4" style="float: right;margin-right: 10px;margin-top: 20px">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" ng-click="lastPage()" ng-disabled="isLast">上一页</button>
+                <button type="button" class="btn btn-default">
+                    第
+                    <input type="text"
+                           style="width: 30px;height: 20px;margin-left: 5px;margin-right: 5px;text-align: center;"
+                           ng-model="showPage">页
+                </button>
+                <button type="button" class="btn btn-danger" ng-click="goto()">跳转</button>
+                <button type="button" class="btn btn-default" ng-click="nextPage()" ng-disabled="isNext">下一页</button>
+            </div>
+            <label class="control-label" style="color: #ccc">共{{allPage}}页</label>
+        </div>
+    </div>
+</div>

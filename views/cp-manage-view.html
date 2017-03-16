@@ -1,0 +1,233 @@
+<style>
+    .modal-body-span {
+        display: block;
+        width: 135px;
+        float: left;
+    }
+
+    .modal-body-div {
+        margin-bottom: 20px
+    }
+</style>
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group">
+                <button class="btn btn-default" data-toggle="modal" data-target="#addCpManage">创建</button>
+                <button class="btn btn-default" data-toggle="modal" data-target="#changeModal" ng-disabled="update">修改
+                </button>
+                <button class="btn btn-default" ng-disabled="delete" ng-click="deleteConfirmWin()">删除</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>序号</td>
+                    <td>选择</td>
+                    <td class="col-md-2">提供商中文名</td>
+                    <td class="col-md-2">提供商英文名</td>
+                    <td class="col-md-2">提供商ID</td>
+                    <td class="col-md-4">提供商描述</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in cpList">
+                    <td>{{$index + 1}}</td>
+                    <td><input type="checkbox" ng-model="item.isSelected"
+                               ng-click="changeStatus(item.isSelected);getChanged()"></td>
+                    <td class="col-md-2">{{item.name}}</td>
+                    <td class="col-md-2">{{item.en_name}}</td>
+                    <td class="col-md-2">{{item.id}}</td>
+                    <td class="col-md-4">{{item.extra}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--创建 模态框-->
+<div class="modal fade" id="addCpManage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog" style="width: 450px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    增加内容提供商信息
+                </h4>
+            </div>
+
+            <form name="addCpManageForm">
+                <div class="modal-body">
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="内容提供商中文名不正确" id="cp_c_name" data-trigger="focus">内容提供商中文名：</span>
+                        <input class="form-control" style="width: 65%" ng-model="name" placeholder="请输入内容提供商中文名"
+                               required name="cp_c_name" ng-class="{'has-error': cp_c_name_has_error}"
+                               ng-focus="remove('cp_c_name_has_error')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="内容提供商英文名不正确" id="cp_en_name" data-trigger="focus">内容提供商英文名：</span>
+                        <input class="form-control" style="width: 65%" ng-model="en_name" placeholder="请输入内容提供商英文名"
+                               required name="cp_en_name" ng-class="{'has-error': cp_en_name_has_error}"
+                               ng-focus="remove('cp_en_name_has_error')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">内容提供商描述：</span>
+                        <textarea class="form-control ng-pristine ng-untouched ng-valid ng-empty" rows="3"
+                                  style="max-width: 65%" ng-model="extra"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="confirmWin()">保存</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addCancle()">关闭
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!--修改模态框-->
+<div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog" style="width: 450px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="ModalLabel">
+                    修改内容提供商信息
+                </h4>
+            </div>
+
+            <form name="updateCpManageForm">
+                <div class="modal-body">
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="内容提供商中文名不正确" id="change_cp_c_name"
+                              data-trigger="focus">内容提供商中文名：</span>
+                        <input class="form-control" style="width: 65%" ng-model="changeInfo.changeName"
+                               placeholder="请输入内容提供商中文名" required name="change_cp_c_name"
+                               ng-class="{'has-error': change_cp_c_name_has_error}"
+                               ng-focus="remove('change_cp_c_name_has_error')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="内容提供商英文名不正确" id="change_cp_en_name"
+                              data-trigger="focus">内容提供商英文名：</span>
+                        <input class="form-control" style="width: 65%" ng-model="changeInfo.changeEnName"
+                               placeholder="请输入内容提供商中文名" required name="change_cp_en_name"
+                               ng-class="{'has-error': change_cp_en_name_has_error}"
+                               ng-focus="remove('change_cp_en_name_has_error')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">内容提供商描述：</span>
+                        <textarea class="form-control ng-pristine ng-untouched ng-valid ng-empty"
+                                  ng-model="changeInfo.changeExtra" rows="3" style="max-width: 65%"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" ng-click="updateConfirmWin()">保存</button>
+                        <!--<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="save()">保存</button>-->
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="changeCancle()">
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!--添加 确认-->
+<div class="modal fade" id="confir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="confirLabel">
+                    创建内容提供商
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认创建内容提供商？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="addCp()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改 确认-->
+<div class="modal fade" id="updateConfir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="updateConfirLabel">
+                    修改内容提供商信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认修改内容提供商信息？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="updateCp()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteConfir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="deleteConfirLabel">
+                    删除内容提供商信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认删除内容提供商信息？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="deleteCp()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

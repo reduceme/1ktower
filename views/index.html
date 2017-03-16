@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>贪玩蛇后台管理</title>
+    <script src="../public/lib/bignumber.js/bignumber.min.js"></script>
+    <script src="../public/lib/json-bigint/lib/json-bigint.js"></script>
+    <script src="../public/lib/jquery/dist/jquery.min.js"></script>
+    <script src="../public/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../public/lib/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+    <script src="../public/lib/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../public/lib/angular/angular.min.js"></script>
+    <script src="../public/lib/angular-route/angular-route.min.js"></script>
+    <script src="../public/lib/angular-animate/angular-animate.min.js"></script>
+    <script src="../public/lib/bootstrap-multiselect-master/bootstrap-multiselect-master/dist/js/bootstrap-multiselect.js"></script>
+    <script src="../public/lib/jsencrypt.min.js"></script>
+    <script src="../public/lib/md5.js"></script>
+    <script src="../app.js"></script>
+    <!--公共函数-->
+    <script src="../services/mainService.js"></script>
+    <!--登陆界面-->
+    <script src="../controllers/loginController.js"></script>
+    <!--总控制器-->
+    <script src="../controllers/mainController.js"></script>
+    <!--用户列表-->
+    <script src="../controllers/userListController.js"></script>
+    <!--重置用户密码-->
+    <script src="../controllers/resetUserinfoController.js"></script>
+    <!--渠道数据-->
+    <script src="../controllers/channelDataController.js"></script>
+    <!--游戏数据-->
+    <script src="../controllers/gameDataController.js"></script>
+    <!--用户数据-->
+    <script src="../controllers/userDataController.js"></script>
+    <!--订单数据-->
+    <script src="../controllers/orderDataController.js"></script>
+    <!--充值数据-->
+    <script src="../controllers/paymentDataController.js"></script>
+    <!--添加游戏-->
+    <script src="../controllers/addGameController.js"></script>
+    <!--渠道管理-->
+    <script src="../controllers/channelManageController.js"></script>
+    <!--SDK产品管理-->
+    <script src="../controllers/sdkManageController.js"></script>
+    <!--渠道产品管理-->
+    <script src="../controllers/cpManageController.js"></script>
+    <!--平台币发放-->
+    <script src="../controllers/sbGrantController.js"></script>
+    <!--平台币发放统计-->
+    <script src="../controllers/sbGrantLogController.js"></script>
+    <!--平台币余额查询-->
+    <script src="../controllers/sbRemainderController.js"></script>
+    <!--平台币收支列表-->
+    <script src="../controllers/sbListController.js"></script>
+    <link rel="stylesheet" type="text/css" href="../public/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../public/lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="../public/lib/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" type="text/css"
+          href="../public/lib/bootstrap-multiselect-master/bootstrap-multiselect-master/dist/css/bootstrap-multiselect.css">
+</head>
+<style type="text/css">
+    * {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .view-body {
+        position: absolute;
+        top: 50px;
+        width: 100%;
+        bottom: 0;
+    }
+
+    .sidebar {
+        height: 100%;
+        display: block;
+        background-color: #293038;
+        min-height: 900px;
+    }
+
+    .sidebar.icon-flod {
+        width: 50px;
+    }
+
+    .sidebar.icon-unflod {
+        width: 180px;
+    }
+
+    .sidebar-flod {
+        height: 30px;
+        background: #394555;
+        color: #aeb9c2;
+        line-height: 30px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .sidebar-flod.icon-flod {
+        width: 50px;
+    }
+
+    .sidebar-flod.icon-unflod {
+        width: 180px;
+    }
+
+    .sidebar li {
+        color: #fff;
+    }
+
+    .nav-item li {
+        display: list-item;
+    }
+
+    .nav-item a {
+        display: block;
+        height: 40px;
+        width: 100%;
+        line-height: 40px;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .sidebar-trans span.icon-flod {
+        display: none;
+    }
+
+    .sidebar-trans span.icon-unflod {
+        display: block;
+    }
+
+    .slide-title {
+        padding-left: 10px;
+    }
+
+    .side-item.on {
+        background-color: #aeb9c2;
+    }
+
+    .side-item.off {
+        background-color: #293038;
+    }
+
+    .inner-item.on {
+        background-color: #fff;
+        z-index: 999;
+    }
+
+    .inner-item.off {
+        background-color: #EAEDF1;
+    }
+
+    .nav-icon {
+        width: 50px;
+        float: left;
+        text-align: center;
+    }
+
+    .view-content {
+        position: absolute;
+        left: 180px;
+        width: 80%;
+        top: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .view-content.icon-flod {
+        left: 50px;
+        width: 86%;
+    }
+
+    .view-content.icon-unflod {
+        left: 180px;
+        width: 80%;
+    }
+
+    .view-content-navbar {
+        width: 180px;
+        background-color: #EAEDF1;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        float: left;
+        min-height: 900px
+    }
+
+    .nav-content-title {
+        width: 180px;
+        height: 50px;
+        line-height: 50px;
+        background: #D9DEE4;
+        font-weight: bold;
+        text-indent: 10px;
+    }
+
+    .nav-content-list a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .nav-content-list .nav-icon {
+        width: 30px;
+        height: 40px;
+        float: left;
+        text-align: center;
+    }
+
+    .view-navbar-collapse {
+        position: absolute;
+        width: 15px;
+        height: 50px;
+        top: 50%;
+        cursor: pointer;
+    }
+
+    .view-navbar-collapse span {
+        line-height: 30px;
+    }
+
+    .view-navbar-collapse.bar-show {
+        left: 166px;
+        transition: all 80ms linear;
+        background-color: #D9DEE4;
+        border-left: none;
+        border-right: 15px solid #f7f7f7;
+        border-bottom: 9px solid transparent;
+        border-top: 9px solid transparent;
+        background-color: #EAEDF1;
+    }
+
+    .view-navbar-collapse.bar-hide {
+        left: 0;
+        transition: all 80ms linear;
+        border-left: 15px solid #EAEDF1;
+        border-right: none;
+        border-bottom: 9px solid transparent;
+        border-top: 9px solid transparent;
+    }
+
+    .view-navbar-collapse.bar-hide span {
+        line-height: 30px;
+        margin-left: -15px;
+    }
+
+    .view-content-body {
+        position: absolute;
+        width: 101%;
+    }
+
+    .view-content-body.bar-show {
+        left: 180px;
+        transition: all 80ms linear;
+        width: 100%;
+    }
+
+    .view-content-body.bar-hide {
+        left: 15px;
+        transition: all 80ms linear;
+        width: 112%;
+    }
+
+    .top-slide-bar {
+        position: absolute;
+        top: 0;
+        right: 10%;
+        background: #EAEDF1;
+        width: 80%;
+        height: 80%;
+    }
+
+    .top-slide-bar.ng-enter {
+        transition: 0.3s linear all;
+        transform: translate3d(0, -100%, 0);
+    }
+
+    .top-slide-bar.ng-enter.ng-enter-active {
+        transform: translate3d(0, 0, 0);
+    }
+
+    .top-slide-bar.ng-leave {
+        transition: 0.3s linear all;
+        transform: translate3d(0, 0px, 0);
+    }
+
+    .top-slide-bar.ng-leave.ng-leave-active {
+        transform: translate3d(0, -100%, 0);
+    }
+
+    td {
+        text-align: center
+    }
+
+    .logo-img {
+        background: url("../images/logo.png");
+        background-size: 100%;
+        width: 400px;
+        height: 354px;
+        margin: 0 auto;
+    }
+
+    .has-error {
+        border: 1px solid #a94442;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    }
+</style>
+
+<body ng-controller="mainController">
+<div class="topbar" ng-if="isLogin">
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="" style="margin-left: 20px"><span class="fa fa-calendar"></span><strong>
+                    &nbsp;贪玩蛇后台</strong></a>
+            </div>
+            <div class="collapse navbar-collapse" style="margin-left: 160px">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="">SNAKEPOP</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">
+                            {{userid2}}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a ng-click="logout()" href="">退出</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="view-body">
+    <div class="sidebar" ng-class="{'icon-unflod':!isSidebarFlod,'icon-flod':isSidebarFlod}" ng-if="isLogin">
+        <div class="sidebar-flod fa fa-bars" ng-click="toggleSidebarStatus()"
+             ng-class="{'icon-unflod':!isSidebarFlod,'icon-flod':isSidebarFlod}"></div>
+        <ul class="sidebar-trans">
+            <li class="nav-item side-item" ng-repeat="item in sidebarList"
+                ng-class="{'on':item.isSelected,'off':!item.isSelected}" ng-show="item.isShow">
+                <a href="" ng-click="changeNavbar(item.id,item.name)">
+                    <div class="nav-icon">
+                        <span class="{{item.icon}}"></span>
+                    </div>
+                    <span class="nav-title" ng-class="{'icon-unflod':!isSidebarFlod,'icon-flod':isSidebarFlod}">{{item.name}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="view-content" ng-class="{'icon-unflod':!isSidebarFlod,'icon-flod':isSidebarFlod}">
+        <div class="view-content-navbar" ng-if="!isNavbarShow">
+            <div class="nav-content-title">{{selectedNavtitle.name}}</div>
+            <div class="nav-content-list">
+                <ul class="nav-item-ul">
+                    <li class="nav-item inner-item on" ng-class="{'on':item.isSelected,'off':!item.isSelected}"
+                        ng-repeat="item in selectedNavtitle.list" ng-click="changeView(selectedNavtitle.list,item.name)"
+                        ng-show="item.isShow">
+                        <a href="">
+                            <span class="slide-title">{{item.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="view-navbar-collapse" ng-click="collapseContentNavbar()"
+             ng-class="{'bar-show':!isNavbarShow,'bar-hide':isNavbarShow}" ng-if="isLogin">
+            <span class="fa fa-arrows-h"></span>
+        </div>
+        <div class="view-content-body" ng-class="{'bar-show':!isNavbarShow,'bar-hide':isNavbarShow}">
+            <div ng-view></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

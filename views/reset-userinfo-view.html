@@ -1,0 +1,123 @@
+<style>
+    .form input, button {
+        margin-top: 10px
+    }
+
+    .panel-body-div span {
+        display: block;
+        width: 70px;
+        float: left;
+    }
+
+    .panel-body-div input {
+        padding-left: 5px;
+        width: 78%;
+    }
+
+    .panel-body-btn-group {
+        margin-top: 15px;
+    }
+
+    .modal-body-span {
+        display: block;
+        width: 100px;
+        float: left;
+        text-align: center
+    }
+
+    .modal-body-div {
+        margin-bottom: 20px
+    }
+
+    .col-md-1 {
+        text-align: center
+    }
+
+    #serial {
+        text-align: center
+    }
+</style>
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+
+    <div class="btn-group" style="margin-left: 15px">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#changePassword">操作</button>
+    </div>
+    <hr>
+</div>
+
+<!--模态框-->
+<div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    重置密码
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form name="form">
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="UID输入不正确" id="resetUid" data-trigger="focus">&nbsp;&nbsp;&nbsp;&nbsp;UID&nbsp;&nbsp;&nbsp;&nbsp;：&nbsp;</span>
+                        <input class="form-control" style="width: 80%" ng-model="uid" placeholder="请输入需重置密码的UID"
+                               required autofocus name="resetUid" ng-class="{'has-error':resetUid_has_error}"
+                               ng-focus="remove('resetUid')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="密码输入不正确" id="resetPassword" data-trigger="focus">&nbsp;新&nbsp;密&nbsp;码&nbsp;：</span>
+                        <input class="form-control" style="width: 80%" ng-model="newPassword" placeholder="请输入密码"
+                               required autofocus name="resetPassword" ng-class="{'has-error': resetPassword_has_error}"
+                               ng-focus="remove('resetPassword')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">重置原因备注：</span>
+                        <textarea ng-disabled="true" class="form-control ng-pristine ng-untouched ng-valid ng-empty"
+                                  rows="3" style="max-width: 80%" ng-model="remark"></textarea>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="confirmWin()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="removePopover()">关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--确认-->
+<div class="modal fade" id="confir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="confirLabel">
+                    确认更改
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认更改密码？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="resetPassword()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+

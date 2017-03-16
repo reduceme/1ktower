@@ -1,0 +1,202 @@
+<style>
+    .secondRow {
+        margin-top: 10px
+    }
+
+    #channelDiv {
+        height: 550px;
+        overflow: scroll;
+    }
+</style>
+
+<div class="row" style="margin-left: 10px" ng-init="getNewUserCount()">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">查看方式：</span>
+            <select required="required" class="form-control" ng-change="getSelectView(obj.id)" ng-model="obj.id"
+                    ng-options="obj.id as obj.name for obj in editView"></select>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group col-md-3" style="width: 100%">
+            <button type="button" class="btn-default btn ng-binding" data-toggle="modal" data-target="#showAdModal"
+                    ng-disabled="selectMethod" style="width: 100%">{{method}}
+            </button>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">账号类型：</span>
+            <select required="required" class="form-control" ng-change="getSelectAccount(selectedAccount)" ng-model="selectedAccount"
+                    ng-options="tmp.id as tmp.name for tmp in editAccount"></select>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">UID：</span>
+            <input type="text" class="form-control" ng-model="searchUid">
+        </div>
+    </div>
+
+    <div style="clear: both"></div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">注册起始时间：</span>
+            <input id="userDataStart" name="dtBegin" type="text" class="form-control" ng-model="startTime">
+        </div>
+    </div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">注册结束时间：</span>
+            <input id="userDataEnd" name="dtEnd" type="text" class="form-control" ng-model="endTime">
+        </div>
+    </div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">排序方式：</span>
+            <select class="form-control" ng-change="orderChange(selected)" ng-model="selected"
+                    ng-options="obj1.id as obj1.name for obj1 in orderList"></select>
+        </div>
+    </div>
+
+    <div class="btn-group secondRow" style="margin-left: 15px">
+        <button type="button" class="btn btn-danger" ng-click="getPaymentList()" >查询</button>
+        <!--<button type="button" class="btn btn-default" ng-click="getToday()" >当日</button>-->
+        <!--<button type="button" class="btn btn-default" ng-click="getWeek()" >7日</button>-->
+        <!--<button type="button" class="btn btn-default" ng-click="getThirtieth()" >30日</button>-->
+        <!--<button type="button" class="btn btn-default" ng-click="getCurrentMonthFirst()" >当月</button>-->
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>序号</td>
+                    <td>账号类型</td>
+                    <td>用户名</td>
+                    <td>登录IP</td>
+                    <td>登录设备</td>
+                    <td>游戏次数</td>
+                    <td>充值次数</td>
+                    <td>充值总额</td>
+                    <td>最后登录时间</td>
+                    <td>注册时间</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in show">
+                    <td>{{$index + 1}}</td>
+                    <td>{{item.role}}</td>
+                    <td>{{item.uid}}</td>
+                    <td>{{item.ip}}</td>
+                    <td>{{item.deivce}}</td>
+                    <td>{{item.login_num}}</td>
+                    <td>{{item.recharge_num}}</td>
+                    <td>{{item.total_recharge}}</td>
+                    <td>{{item.login_at}}</td>
+                    <td>{{item.register_at}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-4" style="float: right;margin-right: 10px;margin-top: 20px">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="lastPage()" ng-disabled="isLast">上一页</button>
+            <button type="button" class="btn btn-default">
+                第
+                <input type="text"
+                       style="width: 30px;height: 20px;margin-left: 5px;margin-right: 5px;text-align: center;"
+                       ng-model="showPage">页
+            </button>
+            <button type="button" class="btn btn-danger" ng-click="goto()">跳转</button>
+            <button type="button" class="btn btn-default" ng-click="nextPage()" ng-disabled="isNext">下一页</button>
+        </div>
+        <label class="control-label" style="color: #ccc">共{{allPage}}页</label>
+    </div>
+</div>
+
+<div class="modal fade" id="showAdModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">{{method}}</h4>
+            </div>
+            <div class="modal-body" id="channelDiv">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr ng-if="showTable">
+                        <td>选择</td>
+                        <td>渠道名</td>
+                    </tr>
+                    <tr ng-if="!showTable">
+                        <td>选择</td>
+                        <td>游戏名</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="tmp in selectedAll">
+                        <td><input type="checkbox" ng-model="tmp.isSelected" ng-click="getAll(tmp.isSelected)"
+                                   ng-disabled="tmp.flag"></td>
+                        <td style="font-weight: 900;color: #003bb3">{{tmp.name}}</td>
+                    </tr>
+
+                    <tr ng-repeat="item in selectList" ng-if="showTable">
+                        <td><input type="checkbox" ng-model="item.isSelected" ng-click="getChanged()"
+                                   ng-disabled="item.isDisabled"></td>
+                        <td>{{item.name}}</td>
+                    </tr>
+
+                    <tr ng-repeat="item in selectList" ng-if="!showTable">
+                        <td><input type="checkbox" ng-model="item.isSelected" ng-click="getChanged()"
+                                   ng-disabled="item.isDisabled"></td>
+                        <td>{{item.name}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#userDataStart').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language: 'zh-CN',
+        pickDate: true,
+        pickTime: true,
+        inputMask: true,
+        pickerPosition: "bottom-left",
+        autoclose: true
+    });
+
+    $('#userDataEnd').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language: 'zh-CN',
+        pickDate: true,
+        pickTime: true,
+        inputMask: true,
+        pickerPosition: "bottom-left",
+        autoclose: true
+    });
+</script>

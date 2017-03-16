@@ -1,0 +1,159 @@
+<style>
+    .secondRow {
+        margin-top: 10px
+    }
+</style>
+<div class="row" style="margin-left: 10px" ng-init="getSbList()">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">订单号：</span>
+            <input class="form-control" ng-model="orderID">
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">账号：</span>
+            <input class="form-control" ng-model="userID">
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">选择游戏：</span>
+            <select class="form-control" ng-change="getSelectApp(obj.appid)" ng-model="obj.appid"
+                    ng-options="obj.appid as obj.name for obj in appList">
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">排序方式：</span>
+            <select class="form-control" ng-change="orderChange(selectedOrder)" ng-model="selectedOrder"
+                    ng-options="obj1.id as obj1.name for obj1 in orderList"></select>
+        </div>
+    </div>
+
+    <div style="clear: both"></div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">收支类型：</span>
+            <select class="form-control" ng-change="getIncome(selectedIncome)" ng-model="selectedIncome"
+                    ng-options="temp.id as temp.name for temp in incomeList">
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">选择渠道：</span>
+            <select class="form-control" ng-change="getSelectChannel(item.channel_id)" ng-model="item.channel_id"
+                    ng-options="item.channel_id as item.name for item in channelList">
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">开始时间：</span>
+            <input id="sbListViewStart" name="dtBegin" type="text" class="form-control" ng-model="startTime">
+        </div>
+    </div>
+
+    <div class="col-md-3 secondRow">
+        <div class="input-group">
+            <span class="input-group-addon">结束时间：</span>
+            <input id="sbListViewEnd" name="dtEnd" type="text" class="form-control" ng-model="endTime">
+        </div>
+    </div>
+
+    <div style="clear: both"></div>
+
+    <div class="btn-group col-md-3 secondRow">
+        <button type="button" class="btn btn-danger" ng-click="resetInfo();getSbList()">查询</button>
+        <button type="button" class="btn btn-default" ng-click="clear()">重置</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getToday()">当日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getWeek()">7日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getThirtieth()">30日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getCurrentMonthFirst()">当月</button>
+    </div>
+
+    <div style="clear: both"></div>
+    <hr>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>时间</td>
+                    <td>UID</td>
+                    <td>订单号</td>
+                    <td>金额</td>
+                    <td>平台币</td>
+                    <td>游戏</td>
+                    <td>区服</td>
+                    <td>渠道</td>
+                    <td>收支类型</td>
+                    <td>订单状态</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in sbList">
+                    <td>{{item.created_at}}</td>
+                    <td>{{item.uid}}</td>
+                    <td>{{item.order_id}}</td>
+                    <td>{{item.money}}</td>
+                    <td>{{item.product_count}}</td>
+                    <td>{{item.app_name}}</td>
+                    <td>{{item.server_name}}</td>
+                    <td>{{item.channel_name}}</td>
+                    <td>{{item.type}}</td>
+                    <td>{{item.status}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4" style="float: right;margin-right: 10px;margin-top: 20px">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" ng-click="lastPage()" ng-disabled="isLast">上一页</button>
+                <button type="button" class="btn btn-default">
+                    第
+                    <input type="text"
+                           style="width: 30px;height: 20px;margin-left: 5px;margin-right: 5px;text-align: center;"
+                           ng-model="showPage">页
+                </button>
+                <button type="button" class="btn btn-danger" ng-click="goto()">跳转</button>
+                <button type="button" class="btn btn-default" ng-click="nextPage()" ng-disabled="isNext">下一页</button>
+            </div>
+            <label class="control-label" style="color: #ccc">共{{allPage}}页</label>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#sbListViewStart').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language: 'zh-CN',
+        pickDate: true,
+        pickTime: true,
+        inputMask: true,
+        pickerPosition: "bottom-left",
+        autoclose: true
+    });
+
+    $('#sbListViewEnd').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language: 'zh-CN',
+        pickDate: true,
+        pickTime: true,
+        inputMask: true,
+        pickerPosition: "bottom-left",
+        autoclose: true
+    });
+</script>

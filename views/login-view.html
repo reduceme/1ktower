@@ -1,0 +1,27 @@
+<style>
+    .form-control {
+        height: 40px
+    }
+</style>
+
+<div class="row">
+    <form novalidate name="form">
+        <div class="col-md-2 col-md-offset-4">
+            <div class="logo-img" style="margin-left: -65px"></div>
+            <div class="input-group">
+                <span class="input-group-addon" data-container="body" data-toggle="popover" data-placement="bottom"
+                      data-content="账号不正确" id="username" data-trigger="focus">账号：</span>
+                <input type="text" class="form-control" ng-model="username" placeholder="请输入账号" autofocus required
+                       name="username" ng-class="{'has-error':username_has_error}" ng-focus="remove('username')">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-addon" data-container="body" data-toggle="popover" data-placement="bottom"
+                      data-content="密码不正确" id="password" data-trigger="focus">密码：</span>
+                <input type="password" class="form-control" ng-model='password' placeholder="请输入密码" required
+                       name="password" ng-class="{'has-error': password_has_error}" ng-focus="remove('password')"/>
+            </div>
+            <button class="btn btn-lg btn-primary btn-block" ng-click="login()" style="margin-top: 15px">登录</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,146 @@
+<style>
+    .form input, button {
+        margin-top: 10px
+    }
+
+    .panel-body-div span {
+        display: block;
+        width: 70px;
+        float: left;
+    }
+
+    .panel-body-div input {
+        padding-left: 5px;
+        width: 78%;
+    }
+
+    .panel-body-btn-group {
+        margin-top: 15px;
+    }
+
+    .input-group {
+        margin-bottom: 10px
+    }
+
+    .modal-body-span {
+        display: block;
+        width: 100px;
+        float: left;
+        text-align: center
+    }
+
+    .modal-body-div {
+        margin-bottom: 20px
+    }
+
+    .col-md-1 {
+        text-align: center
+    }
+
+    #serial {
+        text-align: center
+    }
+</style>
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+
+    <div class="btn-group" style="margin-left: 15px">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sbGrantModal"
+                ng-click="getAppList();getChannelList()">发放
+        </button>
+    </div>
+    <hr>
+</div>
+
+<div class="modal fade" id="sbGrantModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    平台币发放
+                </h4>
+            </div>
+
+            <form name="sbGrantForm">
+                <div class="modal-body">
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="请选择游戏" id="choose_app" data-trigger="focus">&nbsp;&nbsp;选择游戏&nbsp;&nbsp;：&nbsp;</span>
+                        <select class="form-control" style="width: 75%" ng-change="getSelectApp(obj.appid)"
+                                ng-model="obj.appid" ng-options="obj.appid as obj.name for obj in appList" required
+                                name="choose_app" ng-class="{'has-error': choose_app_has_error}"
+                                ng-focus="remove('choose_app_has_error')">
+                        </select>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="请选择渠道" id="choose_channel" data-trigger="focus">&nbsp;&nbsp;选择渠道&nbsp;&nbsp;：&nbsp;</span>
+                        <select class="form-control" style="width: 75%" ng-change="getSelectChannel(item.channel_id)"
+                                ng-model="item.channel_id" ng-options="item.channel_id as item.name for item in channelList" required
+                                name="choose_channel" ng-class="{'has-error': choose_channel_has_error}"
+                                ng-focus="remove('choose_channel_has_error')">
+                        </select>
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="UID输入不正确" id="uid" data-trigger="focus">&nbsp;&nbsp;&nbsp;&nbsp;UID&nbsp;&nbsp;&nbsp;&nbsp;：&nbsp;</span>
+                        <input class="form-control" style="width: 75%" ng-model="uid" placeholder="请输入UID" required
+                               name="uid" ng-class="{'has-error': uid_has_error}" ng-focus="remove('uid_has_error')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span" data-container="body" data-toggle="popover"
+                              data-placement="bottom" data-content="数量输入不正确" id="count" data-trigger="focus">&nbsp;&nbsp;&nbsp;&nbsp;数量&nbsp;&nbsp;&nbsp;&nbsp;：&nbsp;</span>
+                        <input class="form-control" style="width: 75%" ng-model="count" placeholder="请输入发放数量" required
+                               name="count" ng-class="{'has-error': count_has_error}"
+                               ng-focus="remove('count_has_error')">
+                    </div>
+
+                    <div class="modal-body-div">
+                        <span class="modal-body-span">&nbsp;&nbsp;&nbsp;&nbsp;备注&nbsp;&nbsp;&nbsp;&nbsp;：</span>
+                        <textarea class="form-control ng-pristine ng-untouched ng-valid ng-empty" rows="3"
+                                  style="max-width: 75%" ng-model="extra"></textarea>
+                    </div>
+                </div>
+            </form>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="confirmWin()">发放</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addCancle()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--发放 确认-->
+<div class="modal fade" id="confir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="confirLabel">
+                    平台币发放
+                </h4>
+            </div>
+            <div class="modal-body">
+                确认发放平台币？
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="addOrder()" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

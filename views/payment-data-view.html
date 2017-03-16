@@ -1,0 +1,104 @@
+<div class="row" style="margin-left: 10px">
+    <h4>{{selectedSidetitle}}</h4>
+    <hr>
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">开始时间：</span>
+            <input id="paymentStart" name="dtBegin" type="text" class="form-control" ng-model="startTime">
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">结束时间：</span>
+            <input id="paymentEnd" name="dtEnd" type="text" class="form-control" ng-model="endTime">
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-addon">订单号：</span>
+            <input class="form-control" ng-model="orderID">
+        </div>
+    </div>
+
+    <div class="btn-group" style="margin-left: 20px">
+        <button type="button" class="btn btn-danger" ng-click="resetInfo();getPaymentList()">查询</button>
+        <!--<button type="button" class="btn btn-default" ng-click="">重置</button>-->
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getToday()">当日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getWeek()">7日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getThirtieth()">30日</button>
+        <button type="button" class="btn btn-default" ng-click="resetInfo();getCurrentMonthFirst()">当月</button>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>订单号</td>
+                    <td>邮箱</td>
+                    <td>账号</td>
+                    <td>商品名</td>
+                    <td>商品数量</td>
+                    <td>支付时间</td>
+                    <td>支付方式</td>
+                    <td>金额</td>
+                    <td>币种</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in payMentList">
+                    <td>{{item.order_id}}</td>
+                    <td>{{}}</td>
+                    <td>{{item.uid}}</td>
+                    <td>{{item.product_name}}</td>
+                    <td>{{item.product_count}}</td>
+                    <td>{{item.pay_at}}</td>
+                    <td>{{item.pay_by}}</td>
+                    <td>{{item.money}}</td>
+                    <td>{{item.currency}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4" style="float: right;margin-right: 10px;margin-top: 20px">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="lastPage()" ng-disabled="isLast">上一页</button>
+            <button type="button" class="btn btn-default">
+                第
+                <input type="text"
+                       style="width: 30px;height: 20px;margin-left: 5px;margin-right: 5px;text-align: center;"
+                       ng-model="showPage">页
+            </button>
+            <button type="button" class="btn btn-danger" ng-click="goto()">跳转</button>
+            <button type="button" class="btn btn-default" ng-click="nextPage()" ng-disabled="isNext">下一页</button>
+        </div>
+        <label class="control-label" style="color: #ccc">共{{allPage}}页</label>
+    </div>
+</div>
+
+<script>
+    $('#paymentStart').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language: 'zh-CN',
+        pickDate: true,
+        pickTime: true,
+        inputMask: true,
+        pickerPosition: "bottom-left",
+        autoclose: true
+    });
+
+    $('#paymentEnd').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language: 'zh-CN',
+        pickDate: true,
+        pickTime: true,
+        inputMask: true,
+        pickerPosition: "bottom-left",
+        autoclose: true
+    });
+</script>
